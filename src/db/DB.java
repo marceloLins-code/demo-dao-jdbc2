@@ -12,7 +12,7 @@ import java.util.Properties;
 public class DB {
 
 private static Connection conn = null;
-	
+	// SEM ESTA EXTEÇÃO DA NULLEXCEPTION NA EXECUÇÃO
 	public static com.mysql.jdbc.Connection getConnection() {
 		if (conn == null) {
 			try {

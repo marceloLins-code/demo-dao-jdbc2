@@ -11,9 +11,9 @@ import java.util.Properties;
 
 public class DB {
 
-	private static Connection conn = null;
+private static Connection conn = null;
 	
-	public static Connection getConnection() {
+	public static com.mysql.jdbc.Connection getConnection() {
 		if (conn == null) {
 			try {
 				Properties props = loadProperties();
@@ -24,7 +24,7 @@ public class DB {
 				throw new DbException(e.getMessage());
 			}
 		}
-		return conn;
+		return (com.mysql.jdbc.Connection) conn;
 	}
 	
 	public static void closeConnection() {

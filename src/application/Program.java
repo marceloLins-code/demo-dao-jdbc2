@@ -13,7 +13,7 @@ public class Program {
 		
 		Seller seller =  new Seller(21, "bob", "bob@gmail.com", new Date(0), 300.00, obj );
 		
-		System.out.println(obj);
+		
 		System.out.println(seller);
 	}
 

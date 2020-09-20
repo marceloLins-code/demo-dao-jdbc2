@@ -98,20 +98,65 @@ public SellerDaoJDBC() {}
 
 	@Override
 	public List<Seller> findAll() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<Seller> findByDepartment(Department department) {
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		try {
+			
 			st = conn.prepareStatement(
-					"SELECT seller.*,department.Name as DepName " 
+					"SELECT seller.*,department.Name as DepName "  //TODOS OS DADOS DO VEDEDOR MAIS O DEP
 					+ "FROM seller INNER JOIN department " 
 					+ "ON seller.DepartmentId = department.Id "
-					+ " WHERE DepartmentId = ? "
+					+ "ORDER BY Name");
+					
+			
+					rs = st.executeQuery();
+			//como são varios deve se criar uma lista de resulatados. a assinatura do método retorna uma lista
+			List<Seller> list = new ArrayList();
+			
+			// USANDO MAP PARA QUE OS DEPARTAMENTOS NÃO SE REPITAM  AULA 248 7:40
+			Map<Integer, Department> map = new HashMap<>(); 
+			// INSTANCIANDO A MEMORIA DO RETORNO DO BANCO PARA JAVA OO
+			while (rs.next()) {
+				
+				Department dep = map.get(rs.getInt("DepartmentId"));
+				if (dep == null) {
+					dep = instantiateDepartment(rs);
+					map.put(rs.getInt("DepartmentId"), dep);
+				}
+				// APAGA SE ESTA INSTANCIAÇÃO POIS JA ESTA SENDO FEITA DENTRO DO IF ACIMA
+				//Department dep = instantiateDepartment(rs);
+				
+				Seller obj = instantiate(rs,dep)
+;				list.add(obj);
+
+			}	
+			return list;
+			
+		} 
+		catch(SQLException e) {
+			throw new DbException(e.getMessage());
+		} 
+		finally {
+			DB.closeStatement(st);
+			DB.closeResultSet(rs);
+		}
+		
+		
+	}
+
+	@Override
+	// BUSCAR VENDEDORES DADO UM DEPARTAMENTO
+	public List<Seller> findByDepartment(Department department) {
+		
+		PreparedStatement st = null;
+		ResultSet rs = null;
+		try {
+			
+			st = conn.prepareStatement(
+					"SELECT seller.*,department.Name as DepName "  //TODOS OS DADOS DO NEDEDOR MAIS O SEP
+					+ "FROM seller INNER JOIN department " 
+					+ "ON seller.DepartmentId = department.Id "
+					+ " WHERE DepartmentId = ? " // ONDE O DepartmentId FOR IGUAL UM DADO VALOR 
 					+ "ORDER BY Name");
 					
 					st.setInt(1,department.getId());		
